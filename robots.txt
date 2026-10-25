@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+Disallow: /app.html
 Sitemap: https://typingnonstop.netlify.app/sitemap.xml
