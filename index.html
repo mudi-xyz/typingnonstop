@@ -411,6 +411,7 @@ function lessonMsg(wpm,acc,att){if(T.mode!=='lesson')return'';const L=LESSONS[T.
  return `<p style='margin:8px 0'><b style='color:var(--${ok?'ok':'bad'})'>${ok?'Lesson passed! '+'★'.repeat(s)+'☆'.repeat(3-s):'Not yet'}</b><br><small class='mute'>${ok?(T.li<LESSONS.length-1?'Lesson '+(T.li+2)+' is unlocked.':'You finished every lesson!'):'Type every word with at least 90% accuracy and '+L.w+' net WPM.'}</small></p>`}
 function drawLearn(){const u=U();u.lessons=u.lessons||{};
  $('lessonList').innerHTML=LESSONS.map((L,i)=>{const s=u.lessons[i]||0,open=i===0||u.lessons[i-1];return `<div class='item' style='${open?'':'opacity:.45'}'><span><b>${i+1}. ${esc(L.t)}</b><br><small class='mute'>${esc(L.tip)} Target: ${L.w} WPM.</small></span><span style='white-space:nowrap'>${'★'.repeat(s)+'☆'.repeat(3-s)} <button class='btn ${open?'pri':''}' ${open?'':'disabled'} onclick='startLesson(${i})'>${s?'Redo':'Start'}</button></span></div>`}).join('')}
+let NAVPOP=false;
 const IC=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${k}</svg>`;
 const TILES=[['learn','Learn typing','Lessons from zero','#22c55e','#16a34a','<path d="M3 9l9-5 9 5-9 5-9-5zM7 11.5V16c0 1.5 2.2 3 5 3s5-1.5 5-3v-4.5M21 9v6"/>'],['game','Word Rain','Falling-word typing game','#06b6d4','#6366f1','<path d="M7 15a4 4 0 010-8 5 5 0 019.6 1A3.5 3.5 0 0117 15M8 19l-1 2M12 19l-1 2M16 19l-1 2"/>'],['practice','Practice','Pick an exam, set the time','#7c3aed','#4f46e5','<rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>'],
 ['race','Race bots','Beat Nova, Pixel and Blaze','#fb923c','#ef4444','<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>'],
@@ -424,7 +425,7 @@ const save=()=>{try{localStorage.setItem('typing360',JSON.stringify(D))}catch(e)
 const U=()=>D.users.find(u=>u.id===D.cur);
 const av=(u,s)=>u.pic?`<img class='av avimg' src='${u.pic}' alt='' style='${s?`width:${s}px;height:${s}px`:''}'>`:`<span class='av' style='background:${u.color};${s?`width:${s}px;height:${s}px;font-size:${Math.round(s/2.2)}px`:''}'>${esc((u.name[0]||'?').toUpperCase())}</span>`;
 let selCol=COLS[0],SU={mode:'practice',cat:1,lim:'300',lvl:1},T={words:[],start:0,timer:null,done:true,mode:'practice'},BOTS=[];
-function go(id){if(FBON&&!(U()&&U().fb&&AU&&AU.currentUser)&&['s-stats','s-profile','s-board'].includes(id)){if(confirm('Sign in to unlock analytics, ranks, your profile and the leaderboard. Go to sign in now?'))go('s-welcome');return}document.body.dataset.s=id;window.kbRun&&kbRun(id==='s-home'||id==='s-welcome');document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo(0,0);
+function go(id){if(FBON&&!(U()&&U().fb&&AU&&AU.currentUser)&&['s-stats','s-profile','s-board'].includes(id)){if(confirm('Sign in to unlock analytics, ranks, your profile and the leaderboard. Go to sign in now?'))go('s-welcome');return}if(!NAVPOP&&document.body.dataset.s!==id)history.pushState({s:id},'');document.body.dataset.s=id;window.kbRun&&kbRun(id==='s-home'||id==='s-welcome');document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo(0,0);
  if(id==='s-stats')drawStats();if(id==='s-profile')drawProfile();if(id==='s-welcome')drawWelcome();if(id==='s-home')drawHome();if(id==='s-board'){drawBoard();drawChart()}if(id==='s-weak')drawWeak();if(id==='s-learn')drawLearn();if(id==='s-game')gBestShow()}
 function drawWelcome(){
  $('whoCard').classList.toggle('hide',!D.users.length);
@@ -551,18 +552,30 @@ function drawWeak(){const w=U().weak,k=Object.keys(w).sort((a,b)=>w[b]-w[a]);$('
 function clearWeak(){if(confirm('Clear all weak words for '+U().name+'?')){U().weak={};save();drawWeak()}}
 // friend rooms (live, needs the shared link)
 let RM=null,RP=[],RJ=0,SEEN=new Set(),RCODE='';
+function fbJoin(name){
+ const code=name.replace('t360-',''),col=FS.collection('rooms').doc(code).collection('p'),uid=AU.currentUser.uid,me=col.doc(uid);
+ let buf={},tm=null,un=null;
+ const stamp=()=>firebase.firestore.FieldValue.serverTimestamp();
+ const flush=()=>{tm=null;const b=buf;buf={};return me.set(Object.assign(b,{_s:stamp()}),{merge:true})};
+ const hb=setInterval(()=>{me.set({_s:stamp()},{merge:true}).catch(()=>{})},15000);
+ const api={
+  presence(p){Object.assign(buf,p);if('go' in p||'d' in p){clearTimeout(tm);return flush()}if(!tm)tm=setTimeout(()=>flush().catch(()=>{}),700);return Promise.resolve()},
+  onPeers(f){un=col.onSnapshot(s=>{const rows=s.docs.map(d=>{const x=d.data(),t=x._s&&x._s.toMillis?x._s.toMillis():0;return{id:d.id,x,t}});let mx=0;rows.forEach(r=>{if(r.t>mx)mx=r.t});
+   f({peers:rows.filter(r=>!r.t||mx-r.t<60000).map(r=>({peer:r.id,isMe:r.id===uid,presence:r.x}))})},()=>{})},
+  async leave(){clearTimeout(tm);clearInterval(hb);if(un)un();try{await me.delete()}catch(e){}}};
+ return Promise.resolve(api)}
 async function roomEnter(create){
  const c=create?Math.random().toString(36).slice(2,6).toUpperCase():$('rc').value.trim().toUpperCase();
  if(!c){$('rmsg').textContent='Type a room code first.';return}
- try{const room=window.claude&&await claude.use('room');if(!room)throw 0;
+ try{const room=(FBON&&AU&&AU.currentUser)?{join:fbJoin}:(window.claude&&await claude.use('room'));if(!room)throw 0;
   if(RM)await RM.leave();RJ=Date.now();SEEN=new Set();RCODE=c;RM=await room.join('t360-'+c);
   RM.onPeers(ch=>{RP=ch.peers;drawLobby();roomCheck();if(T.mode==='room'&&!T.done)lanes((Date.now()-T.start)/1000)});
   await RM.presence({n:U().name,a:tierOf(U().rp||0),p:0,d:0,go:null});$('rmsg').textContent='';$('rlobby').classList.remove('hide');$('rcode').textContent=c;
- }catch(e){$('rmsg').textContent='Live rooms only work in the shared link while signed in to claude.ai. Bot races and practice work everywhere.'}
+ }catch(e){$('rmsg').textContent='Friend rooms need a signed-in account. Please sign in first, then try again.'}
 }
 function drawLobby(){$('rpeers').innerHTML=RP.map(p=>`<div class="item"><span>${esc(p.presence.n||'Player')}${p.isMe?' <span class="mute">(you)</span>':''}</span><span class="mute">ready</span></div>`).join('')}
 function roomStart(){if(RM)RM.presence({go:Date.now(),seed:Math.floor(Math.random()*1e6),p:0,d:0}).catch(()=>{})}
-function roomCheck(){for(const p of RP){const g=p.presence.go;if(!g)continue;const k=p.peer+g;if(SEEN.has(k))continue;SEEN.add(k);if(Date.now()-RJ<2500)continue;
+function roomCheck(){for(const p of RP){const g=p.presence.go;if(!g)continue;const k=p.peer+g;if(SEEN.has(k))continue;SEEN.add(k);if(Date.now()-RJ<4000)continue;
   const sd=p.presence.seed||1;let i=sd%ALLP.length,t=ALLP[i];while(t.split(/\s+/).length<70){i=(i+3)%ALLP.length;t+=' '+ALLP[i]}
   if(RM)RM.presence({p:0,d:0}).catch(()=>{});countdown(3,()=>begin(t,'room',0));break}}
 function countdown(n,cb){const c=$('cd');c.classList.remove('hide');c.textContent=n;if(n<=0){c.classList.add('hide');cb();return}setTimeout(()=>countdown(n-1,cb),900)}
@@ -654,6 +667,11 @@ async function onAuth(user){
 function cloudSave(){const u=U();if(!FBON||!AU||!AU.currentUser||!u||!u.fb)return;try{FS.collection('users').doc(AU.currentUser.uid).set({data:JSON.stringify(u),updated:Date.now()}).catch(()=>{})}catch(e){}}
 (function(){const P=[['M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6L12 16.7 6.7 19.6l1.1-6L3.4 9.4l6-.8z',4,14,46,-12],['M2 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0',88,10,64,8],['M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z',92,38,42,10],['M3 11l18-8-8 18-2-8-8-2z',6,48,50,-8],['M4 20l1-4L16 5l3 3L8 19l-4 1zM14 7l3 3',84,62,52,14],['M13 2L5 14h6l-1 8 8-12h-6l1-8z',10,74,44,6],['M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2zM8 10h.01M12 10h.01M16 10h.01M8 14h8',90,82,58,-6],['M3 17l6-6 4 4 8-8M15 7h6v6',3,30,48,0],['M12 4a8 8 0 100 16 8 8 0 000-16z',50,4,30,0],['M7 15a4 4 0 010-8 5 5 0 019.6 1A3.5 3.5 0 0117 15M8 19l-1 2M12 19l-1 2M16 19l-1 2',70,90,60,-4],['M2 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0',28,92,56,-6]],CL=['#7c3aed','#06b6d4','#f472b6','#f59e0b','#22c55e'],w=document.createElement('div');w.id='doodles';w.setAttribute('aria-hidden','true');
  P.forEach((d,i)=>{const e=document.createElement('div');e.className='dd';e.style.cssText='left:'+d[1]+'%;top:'+d[2]+'%;width:'+d[3]+'px;color:'+CL[i%5]+';--r:'+d[4]+'deg;animation-delay:-'+(i*1.3)+'s';e.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="'+d[0]+'"/></svg>';w.appendChild(e)});document.body.prepend(w)})();
+history.replaceState({s:'s-welcome'},'');
+addEventListener('popstate',e=>{const cur=document.body.dataset.s;
+ if(cur==='s-arena'||cur==='s-lesson'||cur==='s-game'){if(T&&!T.done){clearInterval(T.timer);T.done=true}LS=null;if(G){G.on=false;G=null;$('gPlay').classList.add('hide');$('gSetup').classList.remove('hide')}$('res').classList.add('hide');$('lres').classList.add('hide')}
+ let s=(e.state&&e.state.s)||'s-welcome';if(s==='s-arena'||s==='s-lesson')s='s-home';
+ NAVPOP=true;go(s);NAVPOP=false});
 initLesson();seg('cf',v=>{SU.f=v;drawCats()});document.body.dataset.s='s-welcome';kbRun(true);drawWelcome();fbInit();
 </script>
 </body>
