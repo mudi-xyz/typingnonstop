@@ -138,6 +138,23 @@ body:has(input:focus,textarea:focus) #kbw{opacity:.15}
 .kk{display:block;width:46px;height:46px;border-radius:10px;background:hsl(var(--h,260) 85% calc(52% + var(--g,0)*28%));box-shadow:0 calc(8px - var(--d,0)*5px) 0 hsl(var(--h,260) 70% 28%),0 14px 22px rgba(0,0,0,.28),0 0 calc(var(--g,0)*28px) hsl(var(--h,260) 100% 62%);transform:translateZ(calc(var(--d,0)*-6px))}
 .kk.w2{width:70px}.kk.sp{width:300px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+#doodles{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .8s}
+body[data-s='s-home'] #doodles,body[data-s='s-welcome'] #doodles{opacity:.55}
+.dd{position:absolute;animation:dfl 9s ease-in-out infinite alternate}
+@keyframes dfl{from{transform:translateY(0) rotate(var(--r))}to{transform:translateY(-18px) rotate(calc(var(--r) + 12deg))}}
+#s-arena.scr{max-width:none;padding:0 16px 12px}
+#s-arena.on{display:grid;grid-template-columns:1fr 200px;grid-template-rows:auto auto 1fr;gap:14px;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+#s-arena>.row{grid-column:1/-1;margin:0 -16px;padding:14px 20px;background:linear-gradient(135deg,var(--p),#4f46e5);color:#fff;align-items:center}
+#s-arena>.row .btn{background:rgba(255,255,255,.2);color:#fff}
+#s-arena>.row #modeL,#s-arena>.row #live,#s-arena>.row #timer{color:#fff}
+#s-arena #lanesC{grid-column:1;grid-row:2;margin:0}
+#s-arena .arenaC{grid-column:1;grid-row:3;margin:0}
+#stats2{grid-column:2;grid-row:2/4;display:flex;flex-direction:column;gap:12px}
+.sb{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+.sb b{display:block;font-size:2.4rem;letter-spacing:-.03em;line-height:1.1}
+.sb span{font-size:.72rem;letter-spacing:.12em;color:var(--mute)}
+#s-arena #ta{height:58px}
+@media(max-width:720px){#s-arena.on{grid-template-columns:1fr;grid-template-rows:auto auto auto 1fr}#stats2{grid-column:1;grid-row:2;flex-direction:row}.sb{flex:1;padding:10px}.sb b{font-size:1.5rem}#s-arena #lanesC{grid-row:3}#s-arena .arenaC{grid-row:4}}
 </style>
 </head>
 <body>
@@ -170,7 +187,7 @@ body:has(input:focus,textarea:focus) #kbw{opacity:.15}
 <section id="s-setup" class="scr">
 <div class="top"><button class="btn" onclick="go('s-home')">‹ Home</button><h2 id="suT"></h2></div>
 <div class="card">
-<div id="bk-cat"><h3 class="lab" id="catH">Choose your exam or job</h3><div class="seg" id="cf" style="margin-bottom:10px"><button data-v="All" class="on">All</button><button data-v="Pakistan">Pakistan</button><button data-v="India">India</button><button data-v="USA">USA</button><button data-v="Practice">Practice</button></div><p class="mute" id="examNote" style="margin:0 0 12px"></p>
+<div id="bk-cat"><h3 class="lab" id="catH">Choose your exam or job</h3><div class="seg" id="cf" style="margin-bottom:10px"><button data-v="All" class="on">All</button><button data-v="Pakistan">Pakistan</button><button data-v="India">India</button><button data-v="USA">USA</button><button data-v="Canada">Canada</button><button data-v="Other">Other</button><button data-v="Practice">Practice</button></div><p class="mute" id="examNote" style="margin:0 0 12px"></p>
 <div class="cats" id="cats"></div></div>
 <div id="bk-pas"><h3 class="lab">Passage</h3><select id="pas" aria-label="Passage"></select></div>
 <div id="bk-cus"><h3 class="lab">Your paragraph</h3>
@@ -190,6 +207,7 @@ body:has(input:focus,textarea:focus) #kbw{opacity:.15}
 </section>
 
 <section id="s-arena" class="scr">
+<div id="stats2"><div class="sb"><b id="stW" style="color:var(--p)">0</b><span>NET WPM</span></div><div class="sb"><b id="stC" style="color:var(--ok)">0</b><span>CORRECT</span></div><div class="sb"><b id="stX" style="color:var(--bad)">0</b><span>WRONG</span></div></div>
 <div class="row"><button class="btn" onclick="exitArena()">‹ Exit</button><span id="modeL" class="mute" style="font-weight:600"></span><span class="sp" id="live"></span><span id="timer">0:00</span></div>
 <div class="card" id="lanesC"><div id="lanes"></div></div>
 <div class="card arenaC"><div id="passage"><div id="caret"></div><div id="words"></div></div>
@@ -304,6 +322,14 @@ X('Punjab Legal Clerk (SSSB)','⚖️','India',30,'Punjab SSSB: 30 WPM gross, wi
 X('Clerk Typist (US civil service)','🇺🇸','USA',40,'Typical US state and county Clerk Typist titles ask for 40 WPM (for example New Jersey and Los Angeles County).',US);
 X('Index Clerk / Typist (US county)','🗄️','USA',35,'Ulster County, NY civil service: 35 WPM typing performance test.',US);
 X('US Federal clerical (BIE)','🇺🇸','USA',40,'US Bureau of Indian Education: 40 WPM in a 5-minute test with 3 or fewer errors.',US,{min:5});
+PK.push('In pursuance of Notification No. SO(E-II)3-45/2026 dated 18-09-2026, the competent authority has been pleased to constitute a Departmental Selection Committee, comprising the Additional Secretary (Chairman), the Director (Admn) and a nominee of the Establishment Division (BPS-20), to scrutinize applications received against 37 vacant posts of Junior Clerk (BPS-11) and to submit its recommendations within thirty (30) days.','Whereas the respondent department failed to implement the judgment of the Peshawar High Court dated 07.05.2025 passed in W.P. No. 1893-P/2024, the petitioners (retired Superintendents, BPS-17) have approached this Honourable Court through a contempt petition under Article 204 of the Constitution of the Islamic Republic of Pakistan, 1973, praying for the immediate release of pension arrears amounting to Rs. 8,45,000/-.');
+US.push('Pursuant to Section 14(b) of the Administrative Procedure Act, the applicant must file Form DS-2207 (in triplicate) no later than 4:30 p.m. on the last business day of the quarter, accompanied by a certified check, money order, or cashier check in the amount of $1,275.50; failure to do so will result in automatic forfeiture of the claim, notwithstanding any prior extension.','The patient, a 67-year-old male with a history of hypertension, type 2 diabetes mellitus, and chronic obstructive pulmonary disease, presented to the emergency department at approximately 03:45 complaining of acute chest pain radiating to the left arm; an electrocardiogram, serial troponin levels, and a chest radiograph were ordered immediately by the attending physician.','Interim financial statements for the period ending September 30 reflect total revenues of $4,862,310, operating expenses of $3,947,085, and a net surplus of $915,225 (approximately 18.8 percent of revenue); the Finance Committee recommends transferring 40% of the surplus to the capital reserve fund, subject to ratification by the Board of Trustees at its next regular meeting.');
+const CAN=['Health information management personnel are responsible for maintaining the confidentiality, accuracy, and completeness of patient records in accordance with provincial privacy legislation. Diagnoses and procedures are coded using ICD-10-CA and CCI classifications, while discharge summaries, operative reports, and consultation notes must be transcribed, verified, and filed within seventy-two hours of the patient discharge from the facility.','The Clerk shall prepare the agenda and minutes of every regular meeting of Council, record each motion together with the names of the mover and seconder, and distribute the approved minutes to all members within five business days; correspondence relating to by-laws, zoning amendments, or tax appeals must be logged, numbered sequentially (for example, 2026-0417), and forwarded to the appropriate department.'],
+GY=['IN THE HIGH COURT OF THE SUPREME COURT OF JUDICATURE, CIVIL JURISDICTION, No. 2026-HC-418. UPON the application of the claimant by notice of motion dated the 12th day of March, 2026, and UPON hearing counsel for both parties, IT IS HEREBY ORDERED that the defendant shall file and serve an affidavit in answer within twenty-one (21) days of the date of this order.','The Typist Clerk is required to type court orders, judgments, writs, and correspondence accurately and expeditiously from manuscripts, shorthand notes, or dictation recordings; to proofread every document against the original before it is signed by the Registrar; and to maintain the strict confidentiality of all matters handled in the Registry, including names, addresses, and case numbers.'];
+X('California State Office Assistant','\u2600\ufe0f','USA',40,'CalHR state civil service typing certification: 40 WPM on a 5-minute test.',US,{min:5});
+X('New York State Office Assistant','\ud83d\uddfd','USA',30,'New York State Office Assistant (Keyboarding) postings: 30 WPM with at least 96% accuracy on a 5-minute test (some titles ask for 35 WPM at 96%).',US,{min:5,acc:96});
+X('Canada government clerk','\ud83c\udf41','Canada',40,'Canadian public-sector clerical postings (Job Bank: provincial and health government): typing speed of 40 WPM.',CAN);
+X('Guyana Supreme Court Typist Clerk','\u2696\ufe0f','Other',30,'Supreme Court of Guyana, Typist Clerk: 30 WPM on a computer keyboard.',GY);
 function passMsg(wpm,acc,att){const x=CATS[SU.cat];if(T.mode!=='practice'||!x||!x.w||att<10)return'';const ok=wpm>=x.w&&(!x.acc||acc>=x.acc);
  return `<p style='margin:8px 0'><b style='color:var(--${ok?'ok':'bad'})'>${ok?'PASS':'Not yet'}: ${wpm} net WPM vs ${x.w} needed`+(x.acc?`, ${acc}% accuracy vs ${x.acc}% needed`:'')+`</b><br><small class='mute'>${esc(x.n)}. Net WPM counts only correct words; real exams may score slightly differently.</small></p>`}
 const COMMON='the be to of and a in that have it for not on with he as you do at this but his by from they we say her she or an will my one all would there their what so up out if about who get which go me when make can like time no just him know take people into year your good some could them see other than then now look only come its over think also back after use two how our work first well way even new want because any these give day most us'.split(' ');
@@ -462,7 +488,7 @@ function begin(text,mode,limit){
  $('modeL').textContent={practice:'Practice',lesson:'Lesson '+(T.li+1),custom:'My paragraph',drill:'Weak-words drill',race:'Race vs bots',room:'Room '+RCODE}[mode];
  $('lanesC').classList.toggle('hide',mode!=='race'&&mode!=='room');
  go('s-arena');if(mode==='race')lanes(0);if(mode==='room')lanes(0);
- $('live').textContent='';$('timer').textContent=fmt(limit);setTimeout(()=>{caret(0,false);ta.focus()},60);
+ $('live').textContent='';$('stW').textContent=0;$('stC').textContent=0;$('stX').textContent=0;$('timer').textContent=fmt(limit);setTimeout(()=>{caret(0,false);ta.focus()},60);
 }
 function caret(i,bad){const sp=$('words').children[i],c=$('caret');if(!sp){c.style.opacity=0;return}c.style.opacity=1;c.className=bad?'err':'';c.style.width=sp.offsetWidth+'px';c.style.height=sp.offsetHeight+'px';c.style.transform=`translate(${sp.offsetLeft}px,${sp.offsetTop}px)`;const P=$('passage');if(sp.offsetTop<P.scrollTop||sp.offsetTop+sp.offsetHeight>P.scrollTop+P.clientHeight-8)P.scrollTop=Math.max(0,sp.offsetTop-40)}
 const fmt=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
@@ -475,7 +501,7 @@ function lanes(el){
  $('lanes').innerHTML=rows.map(r=>`<div class='lane ${r[2]?'me':''}'><span>${esc(r[0])}</span><div class='track an'><i class='pet' style='left:${r[1]}%;transform:translateX(-${r[1]}%)'>${r[3]||'🐢'}</i></div></div>`).join('')}
 function tick(){const el=(Date.now()-T.start)/1000;
  if(T.limit){const left=T.limit-el;$('timer').textContent=fmt(left);if(left<=0){finish();return}}else $('timer').textContent=fmt(el);
- $('live').textContent=Math.round(good(st())/5/Math.max(el/60,.05))+' net WPM';
+ {const lw=Math.round(good(st())/5/Math.max(el/60,.05));$('live').textContent=lw+' net WPM';$('stW').textContent=lw}
  if(T.mode==='race'||T.mode==='room')lanes(el)}
 $('ta').addEventListener('keydown',e=>{const v=$('ta').value;if(e.key==='Backspace'&&((!$('bk').checked&&T.mode!=='race')||!v||/\s$/.test(v))){e.preventDefault();return}if(['ArrowLeft','ArrowUp','Home','PageUp'].includes(e.key)||((e.ctrlKey||e.metaKey)&&['a','z','Backspace'].includes(e.key)))e.preventDefault()});
 $('ta').addEventListener('click',()=>{const t=$('ta');t.setSelectionRange(t.value.length,t.value.length)});
@@ -486,7 +512,7 @@ $('ta').addEventListener('input',()=>{
  if(/\s$/.test(tb.value))T.lock=tb.value;
  if(!T.start){T.start=Date.now();T.timer=setInterval(tick,250)}
  const s=st(),sp=$('words').children,n=T.words.length;
- for(let i=0;i<n;i++)sp[i].className=i<s.d?(s.typed[i]===T.words[i]?'ok':'bad'):'';
+ let cc=0,cw=0;for(let i=0;i<n;i++){const k=i<s.d?(s.typed[i]===T.words[i]?'ok':'bad'):'';if(k==='ok')cc++;else if(k==='bad')cw++;sp[i].className=k}$('stC').textContent=cc;$('stX').textContent=cw;
  caret(Math.min(s.d,n-1),s.d<n&&!T.words[s.d].startsWith(s.cur));
  if(T.mode==='room'&&RM&&s.d!==T.lastD){T.lastD=s.d;RM.presence({p:Math.round(Math.min(s.d,n)/n*100)}).catch(()=>{})}
  if(T.mode==='race'||T.mode==='room')lanes((Date.now()-T.start)/1000);
@@ -626,6 +652,8 @@ async function onAuth(user){
  fix(u);D.cur=id;save();startBoard();
  if(document.body.dataset.s==='s-welcome')go('s-home');else if(document.body.dataset.s==='s-home')drawHome()}
 function cloudSave(){const u=U();if(!FBON||!AU||!AU.currentUser||!u||!u.fb)return;try{FS.collection('users').doc(AU.currentUser.uid).set({data:JSON.stringify(u),updated:Date.now()}).catch(()=>{})}catch(e){}}
+(function(){const P=[['M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6L12 16.7 6.7 19.6l1.1-6L3.4 9.4l6-.8z',4,14,46,-12],['M2 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0',88,10,64,8],['M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z',92,38,42,10],['M3 11l18-8-8 18-2-8-8-2z',6,48,50,-8],['M4 20l1-4L16 5l3 3L8 19l-4 1zM14 7l3 3',84,62,52,14],['M13 2L5 14h6l-1 8 8-12h-6l1-8z',10,74,44,6],['M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2zM8 10h.01M12 10h.01M16 10h.01M8 14h8',90,82,58,-6],['M3 17l6-6 4 4 8-8M15 7h6v6',3,30,48,0],['M12 4a8 8 0 100 16 8 8 0 000-16z',50,4,30,0],['M7 15a4 4 0 010-8 5 5 0 019.6 1A3.5 3.5 0 0117 15M8 19l-1 2M12 19l-1 2M16 19l-1 2',70,90,60,-4],['M2 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0',28,92,56,-6]],CL=['#7c3aed','#06b6d4','#f472b6','#f59e0b','#22c55e'],w=document.createElement('div');w.id='doodles';w.setAttribute('aria-hidden','true');
+ P.forEach((d,i)=>{const e=document.createElement('div');e.className='dd';e.style.cssText='left:'+d[1]+'%;top:'+d[2]+'%;width:'+d[3]+'px;color:'+CL[i%5]+';--r:'+d[4]+'deg;animation-delay:-'+(i*1.3)+'s';e.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="'+d[0]+'"/></svg>';w.appendChild(e)});document.body.prepend(w)})();
 initLesson();seg('cf',v=>{SU.f=v;drawCats()});document.body.dataset.s='s-welcome';kbRun(true);drawWelcome();fbInit();
 </script>
 </body>
