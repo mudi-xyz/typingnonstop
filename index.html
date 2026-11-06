@@ -161,6 +161,10 @@ body[data-s='s-home'] #doodles,body[data-s='s-welcome'] #doodles{opacity:.55}
 .exr{border:1px solid var(--line);border-radius:16px;padding:10px;margin:8px 0;background:var(--soft)}.exr.drag{opacity:.4}.exr .hd{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.exr .grip{cursor:grab;font-size:1.3rem;opacity:.6;user-select:none}.exr input.ti{flex:1;min-width:120px}
 .pk{display:inline-block;margin:3px;padding:4px 10px;border-radius:99px;border:2px solid var(--line);font-size:.8rem;cursor:pointer;font-weight:600}.pk.on{background:#7c3aed;border-color:#7c3aed;color:#fff}
 </style>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7363924118895685"
+     crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="blobs"><i></i><i></i><i></i></div>
@@ -168,7 +172,7 @@ body[data-s='s-home'] #doodles,body[data-s='s-welcome'] #doodles{opacity:.55}
 <section id="s-welcome" class="scr on">
 <div class="hero"><div class='logo'>TNS</div><h1>Typing<span class='grad'>NonStop</span></h1>
 <p class="mute" style="font-size:1.1rem;margin:10px 0 0">Practice smarter. Race faster. Fix the words that slow you down.</p></div>
-<div class="row" style="justify-content:center;margin:0 0 14px"><a class="btn" href="/articles.html" style="text-decoration:none;color:inherit">📖 Read typing guides &amp; articles</a></div>
+<div class="row" style="justify-content:center;margin:0 0 14px"><a class="btn" href="/articles.html" style="text-decoration:none;color:inherit">📖 Read typing guides &amp; articles</a> <button class="btn tnsInstall" type="button" hidden>⬇ Install app</button></div>
 <div class='card hide' id='authCard'><h3>Account</h3>
 <div id='authIn'><p class='mute' style='margin:4px 0 12px'>Sign in to unlock analytics, ranks, profile picture and the leaderboard, and to keep your progress on every device. Or continue as a guest below.</p>
 <div class='row'><input type='email' id='ae' placeholder='Email' autocomplete='email' aria-label='Email' style='flex:1;min-width:180px'><input type='password' id='ap' placeholder='Password (6+ characters)' autocomplete='current-password' aria-label='Password' style='flex:1;min-width:180px'></div>
@@ -179,6 +183,7 @@ body[data-s='s-home'] #doodles,body[data-s='s-welcome'] #doodles{opacity:.55}
 <div class="card"><h3>New typist</h3>
 <div class="row" style="margin-top:12px"><input type="text" id="nn" maxlength="20" placeholder="Your name" aria-label="Your name" style="flex:1;min-width:160px"><button class="btn pri" onclick="newUser()">Let’s go</button></div>
 <div class="row" id="sws"></div></div>
+<div class="adslot" data-slot="bottom"></div>
 </section>
 
 <section id="s-home" class="scr">
@@ -186,7 +191,8 @@ body[data-s='s-home'] #doodles,body[data-s='s-welcome'] #doodles{opacity:.55}
 <div class='card rank' id='rankCard' onclick=go('s-profile')></div>
 <div class='stats'><div class='stat k' onclick=showStats('time')><b id='st2'>0m</b><span class='mute'>practised today</span></div><div class='stat k' onclick=showStats('wpm')><b id='st1'>0</b><span class='mute'>best net WPM</span></div><div class='stat k' onclick=showStats('acc')><b id='st3'>–</b><span class='mute'>avg accuracy</span></div></div>
 <div class="tiles" id="tiles"></div>
-<div class="row" style="justify-content:center;margin-top:26px"><button class="btn" onclick="openFb()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg>Send feedback</button></div>
+<div class="adslot" data-slot="top"></div>
+<div class="row" style="justify-content:center;margin-top:26px"><button class="btn tnsInstall" type="button" hidden>⬇ Install app</button> <button class="btn" onclick="openFb()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg>Send feedback</button></div>
 <p class='mute' style='text-align:center;margin-top:18px;font-size:.85rem'><a href='articles.html'>Articles</a> · <a href='about.html'>About</a> · <a href='privacy.html'>Privacy</a> · <a href='terms.html'>Terms</a></p>
 </section>
 
@@ -740,5 +746,26 @@ addEventListener('popstate',e=>{const cur=document.body.dataset.s;
  NAVPOP=true;go(s);NAVPOP=false});
 initLesson();seg('cf',v=>{SU.f=v;drawCats()});document.body.dataset.s='s-welcome';kbRun(true);drawWelcome();fbInit();
 </script>
+
+<script>
+/* Install-app button (no offline cache: the app still needs internet) */
+(function(){
+ if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}
+ var dp=null,btns=function(){return document.querySelectorAll('.tnsInstall')};
+ var standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+ var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+ function show(on){btns().forEach(function(b){b.hidden=!on})}
+ if(standalone){show(false)}
+ else if(ios){show(true)}
+ window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;if(!standalone)show(true)});
+ window.addEventListener('appinstalled',function(){dp=null;show(false)});
+ document.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('.tnsInstall');if(!b)return;
+  if(dp){dp.prompt();dp.userChoice.then(function(){dp=null;show(false)})}
+  else if(ios){alert('To install: tap the Share button in Safari, then choose "Add to Home Screen".')}
+ });
+})();
+</script>
+<script src="/ads.js" defer></script>
 </body>
 </html>
