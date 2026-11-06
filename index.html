@@ -7,7 +7,7 @@
 <meta name="description" content="Free typing practice for exam candidates in Pakistan, India and the USA. Real pass marks, net WPM, weak-word drills, animal races and step-by-step lessons.">
 
 <meta property="og:title" content="TypingNonStop"><meta property="og:description" content="Free typing practice with real government exam pass marks."><meta property="og:type" content="website">
-<meta name="theme-color" content="#7c3aed"><link rel="canonical" href="https://typingnonstop.com/"><meta property="og:url" content="https://typingnonstop.com/"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c3aed'/%3E%3Cstop offset='1' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-size='26' font-weight='800' text-anchor='middle' fill='white' font-family='Arial'%3ETNS%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#0d0b1a"><link rel="canonical" href="https://typingnonstop.com/"><meta property="og:url" content="https://typingnonstop.com/"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c3aed'/%3E%3Cstop offset='1' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-size='26' font-weight='800' text-anchor='middle' fill='white' font-family='Arial'%3ETNS%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f5fb;--card:#fff;--ink:#16162e;--mute:#6c6c87;--line:#e6e4f0;--p:#7c3aed;--t:#06b6d4;--ok:#16a34a;--bad:#e11d48;--badbg:#ffe4ea;--soft:rgba(124,58,237,.08);--sh:0 10px 40px rgba(60,30,120,.10);
@@ -160,6 +160,12 @@ body[data-s='s-home'] #doodles,body[data-s='s-welcome'] #doodles{opacity:.55}
 .shr{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}.shr .btn{padding:8px 14px;font-size:.9rem}
 .exr{border:1px solid var(--line);border-radius:16px;padding:10px;margin:8px 0;background:var(--soft)}.exr.drag{opacity:.4}.exr .hd{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.exr .grip{cursor:grab;font-size:1.3rem;opacity:.6;user-select:none}.exr input.ti{flex:1;min-width:120px}
 .pk{display:inline-block;margin:3px;padding:4px 10px;border-radius:99px;border:2px solid var(--line);font-size:.8rem;cursor:pointer;font-weight:600}.pk.on{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.tnsInstall{background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;font-weight:700;box-shadow:0 6px 18px rgba(124,58,237,.45);text-decoration:none}
+.tnsInstall:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(6,182,212,.5);filter:brightness(1.12)}
+.tnsInstall:active{transform:translateY(0)}
+.tnsInstall[hidden],#tnsFs[hidden]{display:none!important}
+#tnsDrag{display:none;position:fixed;top:0;left:env(titlebar-area-x,0);width:env(titlebar-area-width,100%);height:env(titlebar-area-height,34px);-webkit-app-region:drag;app-region:drag;z-index:5}
+@media (display-mode: window-controls-overlay){body{padding-top:env(titlebar-area-height,34px)}#tnsDrag{display:block}}
 </style>
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
@@ -167,6 +173,7 @@ body[data-s='s-home'] #doodles,body[data-s='s-welcome'] #doodles{opacity:.55}
      crossorigin="anonymous"></script>
 </head>
 <body>
+<div id="tnsDrag"></div>
 <div class="blobs"><i></i><i></i><i></i></div>
 
 <section id="s-welcome" class="scr on">
@@ -187,12 +194,12 @@ body[data-s='s-home'] #doodles,body[data-s='s-welcome'] #doodles{opacity:.55}
 </section>
 
 <section id="s-home" class="scr">
-<div class="top"><span id="hAv"></span><div><h2 id="hName"></h2><span class="mute">What are we practising today?</span></div><button class='btn sp' onclick=go('s-profile')>Profile</button><button class='btn' onclick=go('s-welcome')>Switch</button></div>
+<div class="top"><span id="hAv"></span><div><h2 id="hName"></h2><span class="mute">What are we practising today?</span></div><div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end"><button class='btn tnsInstall' type='button' hidden>⬇ Install app</button><button class='btn' id='tnsFs' type='button' hidden>⛶ Full screen</button><button class='btn' onclick=go('s-profile')>Profile</button><button class='btn' onclick=go('s-welcome')>Switch</button></div></div>
 <div class='card rank' id='rankCard' onclick=go('s-profile')></div>
 <div class='stats'><div class='stat k' onclick=showStats('time')><b id='st2'>0m</b><span class='mute'>practised today</span></div><div class='stat k' onclick=showStats('wpm')><b id='st1'>0</b><span class='mute'>best net WPM</span></div><div class='stat k' onclick=showStats('acc')><b id='st3'>–</b><span class='mute'>avg accuracy</span></div></div>
 <div class="tiles" id="tiles"></div>
 <div class="adslot" data-slot="top"></div>
-<div class="row" style="justify-content:center;margin-top:26px"><button class="btn tnsInstall" type="button" hidden>⬇ Install app</button> <button class="btn" onclick="openFb()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg>Send feedback</button></div>
+<div class="row" style="justify-content:center;margin-top:26px"><button class="btn" onclick="openFb()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg>Send feedback</button></div>
 <p class='mute' style='text-align:center;margin-top:18px;font-size:.85rem'><a href='articles.html'>Articles</a> · <a href='about.html'>About</a> · <a href='privacy.html'>Privacy</a> · <a href='terms.html'>Terms</a></p>
 </section>
 
@@ -755,11 +762,12 @@ initLesson();seg('cf',v=>{SU.f=v;drawCats()});document.body.dataset.s='s-welcome
  var standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
  function show(on){btns().forEach(function(b){b.hidden=!on})}
- if(standalone){show(false)}
+ if(standalone){show(false);var fb=document.getElementById('tnsFs');if(fb)fb.hidden=false}
  else if(ios){show(true)}
  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;if(!standalone)show(true)});
  window.addEventListener('appinstalled',function(){dp=null;show(false)});
  document.addEventListener('click',function(e){
+  if(e.target.closest&&e.target.closest('#tnsFs')){if(document.fullscreenElement){document.exitFullscreen()}else{document.documentElement.requestFullscreen().catch(function(){})}return}
   var b=e.target.closest&&e.target.closest('.tnsInstall');if(!b)return;
   if(dp){dp.prompt();dp.userChoice.then(function(){dp=null;show(false)})}
   else if(ios){alert('To install: tap the Share button in Safari, then choose "Add to Home Screen".')}
